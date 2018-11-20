@@ -139,7 +139,7 @@ export default {
               y += y;
             }
 
-            // TODO: need to corrige it cos sometimes pb
+            // TODO: need to corrige it cos some pb
 
             for (let i = 0; i < arrayLine.length; i += 1) {
               this.setColor(arrayLine[i][0], arrayLine[i][1], player);
