@@ -13,7 +13,12 @@
       <div class="wrapper">
         <article class="grid">
           <div class="row" v-for="(item,i ) in grid" v-if="grid.length > 0" :key="i">
-            <Square v-for="(elmt, j) in item" :status="elmt" @clickSquare="checkElement($event)" v-if="elmt != null" :key="elmt.status.position"/>
+            <Square
+              v-for="elmt in item"
+              :status="elmt"
+              @clickSquare="checkElement($event)"
+              v-if="elmt != null"
+              :key="elmt.status.position"/>
           </div>
         </article>
       </div>
@@ -41,12 +46,12 @@ export default {
       const { row, col } = this;
       this.grid = [];
 
-      let grill = [];
+      const grill = [];
 
-      for (let i = 1; i <= row; i++) {
+      for (let i = 1; i <= row; i += 1) {
         grill[i] = [];
 
-        for (let j = 1; j <= col; j++) {
+        for (let j = 1; j <= col; j += 1) {
           grill[i][j] = { status: 0, position: [i, j] };
         }
       }
@@ -78,7 +83,6 @@ export default {
       return data === 0;
     },
     isValidPosition(data, player) {
-      console.log(data, player);
       const gridCheck = this.grid;
       const row = data[0];
       const col = data[1];
@@ -86,10 +90,10 @@ export default {
       const statusReverse = player === 1 ? 2 : 1;
       let rowCheck;
       let colCheck;
-      let squarePosition = [];
+      const squarePosition = [];
 
-      for (let rowDir = -1; rowDir <= 1; rowDir++) {
-        for (let colDir = -1; colDir <= 1; colDir++) {
+      for (let rowDir = -1; rowDir <= 1; rowDir += 1) {
+        for (let colDir = -1; colDir <= 1; colDir += 1) {
           rowCheck = row + rowDir;
           colCheck = col + colDir;
 
@@ -101,15 +105,13 @@ export default {
         }
       }
 
-      console.log('spaq', squarePosition);
-
       this.checkAround(squarePosition, [row, col], player);
     },
     checkAround(data, event, player) {
       const playerInverse = player === 1 ? 2 : 1;
       const dir = [];
 
-      for (let i = 0; i < data.length; i++) {
+      for (let i = 0; i < data.length; i += 1) {
         let x = data[i][0] - event[0];
         let y = data[i][1] - event[1];
 
@@ -119,32 +121,34 @@ export default {
           if (this.checkPlayer(data[i][0] - -x, data[i][1] - -y, player)) {
             this.setColor(data[i][0], data[i][1], player);
             this.setColor(event[0], event[1], player);
-            this.player = player === 1 ? 2 : 1;
+            this.changePlayer(player);
           }
           const solution = [data[i][0], data[i][1]];
           const newItemX = data[i][0] - -x;
           const newItemY = data[i][1] - -y;
 
           if (this.checkPlayer(data[i][0] - -x, data[i][1] - -y, playerInverse)) {
-            let arrrar = [];
+            const arrayLine = [];
+
             while (
               this.checkPlayer(data[i][0] - -x, data[i][1] - -y, playerInverse) &&
               this.checkStatus(data[i][0] - -x, data[i][1] - -y)
             ) {
-              arrrar.push([data[i][0] - -x, data[i][1] - -y]);
+              arrayLine.push([data[i][0] - -x, data[i][1] - -y]);
               x += x;
               y += y;
             }
 
-            /// TODO: need to corrige it cos somtimes pb
-            for (var i = 0; i < arrrar.length; i++) {
-              this.setColor(arrrar[i][0], arrrar[i][1], player);
+            // TODO: need to corrige it cos sometimes pb
+
+            for (let i = 0; i < arrayLine.length; i += 1) {
+              this.setColor(arrayLine[i][0], arrayLine[i][1], player);
               this.setColor(solution[0], solution[1], player);
               this.setColor(newItemX, newItemY, player);
               this.setColor(event[0], event[1], player);
             }
 
-            this.player = player === 1 ? 2 : 1;
+            this.changePlayer(player);
           }
         }
       }
@@ -162,6 +166,9 @@ export default {
     },
     positionInGrid(row, col) {
       return row >= 1 && row <= this.row && (col >= 1 && col <= this.col);
+    },
+    changePlayer(player) {
+      this.player = player === 1 ? 2 : 1;
     },
   },
 };
